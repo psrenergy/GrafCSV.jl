@@ -1,4 +1,4 @@
-module OpenCSV
+module GrafCSV
 
 import PSRClassesInterface
 # Load packages defined in the upper module PSRClassesInterface
@@ -16,7 +16,7 @@ function PSRI.convert_file(
     path_from::String;
     path_to::String = "",
 )
-    error("Conversion with OpenCSV.Reader and OpenCSV.Writer is a no op.")
+    error("Conversion with GrafCSV.Reader and GrafCSV.Writer is a no op.")
 end
 
 end

@@ -1,9 +1,9 @@
-using OpenCSV
+using GrafCSV
 using Test
 
-const PSRI = OpenCSV.PSRClassesInterface
+const PSRI = GrafCSV.PSRClassesInterface
 
-@testset "OpenCSV file format" begin
+@testset "GrafCSV file format" begin
     @testset "Read and write with monthlydata" begin
         include("read_and_write_monthly.jl")
     end

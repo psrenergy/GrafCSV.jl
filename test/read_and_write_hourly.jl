@@ -10,7 +10,7 @@ function read_write_csv_hourly()
     INITIAL_YEAR = 2006
 
     gerter = PSRI.open(
-        PSRI.OpenCSV.Writer,
+        GrafCSV.Writer,
         FILE_GERTER,
         is_hourly = true,
         scenarios = SCENARIOS,
@@ -45,7 +45,7 @@ function read_write_csv_hourly()
     PSRI.close(gerter)
 
     ior = PSRI.open(
-        PSRI.OpenCSV.Reader,
+        GrafCSV.Reader,
         FILE_GERTER,
         is_hourly = true
     )

@@ -10,7 +10,7 @@ function read_write_csv_test()
     UNIT = "MW"
 
     iow = PSRI.open(
-        PSRI.OpenCSV.Writer,
+        GrafCSV.Writer,
         FILE_PATH,
         blocks = BLOCKS,
         scenarios = SCENARIOS,
@@ -45,7 +45,7 @@ function read_write_csv_test()
     PSRI.close(iow)
 
     ior = PSRI.open(
-        PSRI.OpenCSV.Reader,
+        GrafCSV.Reader,
         FILE_PATH
     )
 
@@ -83,8 +83,8 @@ function read_write_csv_test()
     PSRI.close(ior)
 
     @test_throws ErrorException PSRI.convert_file(
-        PSRI.OpenCSV.Reader,
-        PSRI.OpenCSV.Writer,
+        GrafCSV.Reader,
+        GrafCSV.Writer,
         FILE_PATH,
     )
 

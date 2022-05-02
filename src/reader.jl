@@ -89,10 +89,10 @@ function PSRI.open(
 )
     # TODO
     if verbose_header || !isempty(header) || use_header || allow_empty
-        error("verbose_header, header, use_header and allow_empty arguments not supported by OpenCSV")
+        error("verbose_header, header, use_header and allow_empty arguments not supported by GrafCSV")
     end
     if first_stage != Dates.Date(1900, 1, 1)
-        error("first_stage not supported by OpenCSV")
+        error("first_stage not supported by GrafCSV")
     end
 
     PATH_CSV = path
@@ -146,8 +146,8 @@ function PSRI.open(
     return io
 end
 
-function Base.getindex(opencsvreader::Reader, args...)
-    return Base.getindex(opencsvreader.data, args...)
+function Base.getindex(GrafCSVreader::Reader, args...)
+    return Base.getindex(GrafCSVreader.data, args...)
 end
 
 function PSRI.next_registry(ocr::Reader)
@@ -165,26 +165,26 @@ function PSRI.next_registry(ocr::Reader)
     return nothing
 end
 
-PSRI.max_stages(opencsvreader::Reader) = opencsvreader.stages
-PSRI.max_scenarios(opencsvreader::Reader) = opencsvreader.scenarios
-PSRI.max_blocks(opencsvreader::Reader) = opencsvreader.blocks
-PSRI.max_agents(opencsvreader::Reader) = length(opencsvreader.agent_names)
+PSRI.max_stages(GrafCSVreader::Reader) = GrafCSVreader.stages
+PSRI.max_scenarios(GrafCSVreader::Reader) = GrafCSVreader.scenarios
+PSRI.max_blocks(GrafCSVreader::Reader) = GrafCSVreader.blocks
+PSRI.max_agents(GrafCSVreader::Reader) = length(GrafCSVreader.agent_names)
 
-PSRI.initial_stage(opencsvreader::Reader) = opencsvreader.initial_stage
-PSRI.initial_year(opencsvreader::Reader) = opencsvreader.initial_year
+PSRI.initial_stage(GrafCSVreader::Reader) = GrafCSVreader.initial_stage
+PSRI.initial_year(GrafCSVreader::Reader) = GrafCSVreader.initial_year
 
-PSRI.data_unit(opencsvreader::Reader) = opencsvreader.unit
+PSRI.data_unit(GrafCSVreader::Reader) = GrafCSVreader.unit
 
-PSRI.current_stage(opencsvreader::Reader) = opencsvreader.current_stage
-PSRI.current_scenario(opencsvreader::Reader) = opencsvreader.current_scenario
-PSRI.current_block(opencsvreader::Reader) = opencsvreader.current_block
-PSRI.stage_type(opencsvreader::Reader) = opencsvreader.stage_type
-PSRI.is_hourly(opencsvreader::Reader) = opencsvreader.is_hourly
+PSRI.current_stage(GrafCSVreader::Reader) = GrafCSVreader.current_stage
+PSRI.current_scenario(GrafCSVreader::Reader) = GrafCSVreader.current_scenario
+PSRI.current_block(GrafCSVreader::Reader) = GrafCSVreader.current_block
+PSRI.stage_type(GrafCSVreader::Reader) = GrafCSVreader.stage_type
+PSRI.is_hourly(GrafCSVreader::Reader) = GrafCSVreader.is_hourly
 
-function PSRI.agent_names(opencsvreader::Reader)
-    return opencsvreader.agent_names
+function PSRI.agent_names(GrafCSVreader::Reader)
+    return GrafCSVreader.agent_names
 end
 
-function PSRI.close(opencsvreader::Reader)
+function PSRI.close(GrafCSVreader::Reader)
     return nothing
 end
