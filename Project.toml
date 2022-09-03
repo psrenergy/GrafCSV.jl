@@ -9,7 +9,7 @@ PSRClassesInterface = "1eab49e5-27d8-4905-b9f6-327b6ea666c4"
 
 [compat]
 CSV = "0.10"
-PSRClassesInterface = "0.5, 0.7"
+PSRClassesInterface = "0.7"
 julia = "1.6"
 
 [extras]
