@@ -146,8 +146,8 @@ function PSRI.open(
     return io
 end
 
-function Base.getindex(GrafCSVreader::Reader, args...)
-    return Base.getindex(GrafCSVreader.data, args...)
+function Base.getindex(reader::Reader, args...)
+    return Base.getindex(reader.data, args...)
 end
 
 function PSRI.next_registry(ocr::Reader)
@@ -165,26 +165,28 @@ function PSRI.next_registry(ocr::Reader)
     return nothing
 end
 
-PSRI.max_stages(GrafCSVreader::Reader) = GrafCSVreader.stages
-PSRI.max_scenarios(GrafCSVreader::Reader) = GrafCSVreader.scenarios
-PSRI.max_blocks(GrafCSVreader::Reader) = GrafCSVreader.blocks
-PSRI.max_agents(GrafCSVreader::Reader) = length(GrafCSVreader.agent_names)
+PSRI.max_stages(reader::Reader) = reader.stages
+PSRI.max_scenarios(reader::Reader) = reader.scenarios
+PSRI.max_blocks(reader::Reader) = reader.blocks
+PSRI.max_agents(reader::Reader) = length(reader.agent_names)
 
-PSRI.initial_stage(GrafCSVreader::Reader) = GrafCSVreader.initial_stage
-PSRI.initial_year(GrafCSVreader::Reader) = GrafCSVreader.initial_year
+PSRI.initial_stage(reader::Reader) = reader.initial_stage
+PSRI.initial_year(reader::Reader) = reader.initial_year
 
-PSRI.data_unit(GrafCSVreader::Reader) = GrafCSVreader.unit
+PSRI.data_unit(reader::Reader) = reader.unit
 
-PSRI.current_stage(GrafCSVreader::Reader) = GrafCSVreader.current_stage
-PSRI.current_scenario(GrafCSVreader::Reader) = GrafCSVreader.current_scenario
-PSRI.current_block(GrafCSVreader::Reader) = GrafCSVreader.current_block
-PSRI.stage_type(GrafCSVreader::Reader) = GrafCSVreader.stage_type
-PSRI.is_hourly(GrafCSVreader::Reader) = GrafCSVreader.is_hourly
+PSRI.current_stage(reader::Reader) = reader.current_stage
+PSRI.current_scenario(reader::Reader) = reader.current_scenario
+PSRI.current_block(reader::Reader) = reader.current_block
+PSRI.stage_type(reader::Reader) = reader.stage_type
+PSRI.is_hourly(reader::Reader) = reader.is_hourly
 
-function PSRI.agent_names(GrafCSVreader::Reader)
-    return GrafCSVreader.agent_names
+PSRI.hour_discretization(graf::Reader) = 1
+
+function PSRI.agent_names(reader::Reader)
+    return reader.agent_names
 end
 
-function PSRI.close(GrafCSVreader::Reader)
+function PSRI.close(reader::Reader)
     return nothing
 end
