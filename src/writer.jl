@@ -17,6 +17,7 @@ PSRI.is_hourly(graf::Writer) = graf.is_hourly
 PSRI.stage_type(graf::Writer) = graf.stage_type
 PSRI.max_blocks(graf::Writer) = graf.blocks
 PSRI.initial_stage(graf::Writer) = graf.initial_stage
+PSRI.hour_discretization(graf::Writer) = 1
 
 function _build_agents_str(agents::Vector{String})
     agents_str = ""

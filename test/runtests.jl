@@ -10,4 +10,7 @@ const PSRI = GrafCSV.PSRClassesInterface
     @testset "Read and write with hourlydata" begin
         include("read_and_write_hourly.jl")
     end
+    @testset "Utils" begin
+        include("time_series_utils.jl")
+    end
 end
