@@ -11,6 +11,9 @@ mutable struct Writer <: PSRI.AbstractWriter
     initial_stage::Int
     initial_year::Int
     row_separator::String
+    last_stage_registry::Int
+    last_scenario_registry::Int
+    last_block_registry::Int
 end
 
 PSRI.is_hourly(graf::Writer) = graf.is_hourly
@@ -48,6 +51,9 @@ function PSRI.open(
     sequential_model::Bool = true,
     # addtional
     allow_unsafe_name_length::Bool = false,
+    last_stage_registry::Int = 1,
+    last_scenario_registry::Int = 1,
+    last_block_registry::Int = 0,
 )
 
     # TODO: consider name length
@@ -144,10 +150,58 @@ function PSRI.open(
         initial_stage,
         initial_year,
         row_separator,
+        last_stage_registry,
+        last_scenario_registry,
+        last_block_registry,
     )
 end
 
-# TODO check next entry is in the correct order
+function check_next_registry(
+    writer::Writer,
+    stage::Integer,
+    scenario::Integer,
+    block::Integer,
+)
+    blocks_in_stage = PSRI.blocks_in_stage(writer, writer.last_stage_registry)
+
+    if writer.last_block_registry == blocks_in_stage
+        expected_block = 1
+        reset_block = true
+    else
+        expected_block = writer.last_block_registry + 1
+        reset_block = false
+    end
+
+    if reset_block && writer.last_scenario_registry == writer.scenarios
+        expected_scenario = 1
+        reset_scenario = true
+    elseif reset_block
+        expected_scenario = writer.last_scenario_registry + 1
+        reset_scenario = false
+    else
+        expected_scenario = writer.last_scenario_registry
+        reset_scenario = false
+    end
+
+    if reset_scenario && reset_block
+        expected_stage = writer.last_stage_registry + 1
+        reset_stage = false
+    else
+        expected_stage = writer.last_stage_registry
+        reset_stage = false
+    end
+
+    if (expected_stage == stage) && (expected_scenario == scenario) && (expected_block == block)
+        return
+    else
+        error("In GrafCSV, registries must be written by iterating indexes in (stages, scenarios, blocks) order.\n 
+               Last registry: (stage: $(writer.last_stage_registry), scenario: $(writer.last_scenario_registry), block: $(writer.last_block_registry)) \n
+               Current registry: (stage: $(stage), scenario: $(scenario), block: $(block)) \n
+               Expected registry: (stage: $(expected_stage), scenario: $(expected_scenario), block: $(expected_block)) \n
+               To add registries in any order, use OpenBinary format.")
+    end
+    
+end
 
 function PSRI.write_registry(
     writer::Writer,
@@ -173,6 +227,9 @@ function PSRI.write_registry(
     if length(data) != writer.agents
         error("data vector has length $(length(data)) and expected was $(writer.agents)")
     end
+
+    check_next_registry(writer, stage, scenario, block)
+
     str = ""
     str *= string(stage) * ','
     str *= string(scenario) * ','
@@ -183,6 +240,10 @@ function PSRI.write_registry(
     str = chop(str; tail = 1) # remove last comma
     str *= writer.row_separator
     Base.write(writer.io, str)
+
+    writer.last_stage_registry = stage
+    writer.last_scenario_registry = scenario
+    writer.last_block_registry = block
     return nothing
 end
 
