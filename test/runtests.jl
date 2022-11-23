@@ -13,4 +13,7 @@ const PSRI = GrafCSV.PSRClassesInterface
     @testset "Utils" begin
         include("time_series_utils.jl")
     end
+    @testset "Check registry error" begin
+        include("check_registry_error.jl")
+    end
 end
