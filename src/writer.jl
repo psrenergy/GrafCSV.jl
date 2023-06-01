@@ -155,8 +155,7 @@ function PSRI.write_registry(
     stage::Integer,
     scenario::Integer = 1,
     block::Integer = 1,
-) where T
-
+)
     if !writer.isopen
         error("File is not in open state.")
     end
