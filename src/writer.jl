@@ -48,6 +48,7 @@ function PSRI.open(
     sequential_model::Bool = true,
     # addtional
     allow_unsafe_name_length::Bool = false,
+    verbose_hour_block_check::Bool = true,
 )
 
     # TODO: consider name length
