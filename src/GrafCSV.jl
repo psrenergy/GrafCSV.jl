@@ -13,8 +13,8 @@ include("writer.jl")
 function PSRI.convert_file(
     ::Type{Reader},
     ::Type{Writer},
-    path_from::String;
-    path_to::String = "",
+    path_from::AbstractString;
+    path_to::AbstractString = "",
 )
     error("Conversion with GrafCSV.Reader and GrafCSV.Writer is a no op.")
 end

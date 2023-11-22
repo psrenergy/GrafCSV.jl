@@ -22,31 +22,43 @@ mutable struct Reader <: PSRI.AbstractReader
     is_hourly::Bool
 end
 
-function _parse_unit(header)
+function _parse_unit(header::AbstractString)
     first_line_splitted = split(header[1], ',')
     return first_line_splitted[4]
 end
-function _parse_stage_type(header)
+
+function _parse_stage_type(header::AbstractString)
     first_line_splitted = split(header[1], ',')
     return PSRI.StageType(parse(Int, first_line_splitted[5]))
 end
-function _parse_initial_stage(header)
+
+function _parse_initial_stage(header::AbstractString)
     first_line_splitted = split(header[1], ',')
     return parse(Int, first_line_splitted[6])
 end
-function _parse_initial_year(header)
+
+function _parse_initial_year(header::AbstractString)
     first_line_splitted = split(header[1], ',')
     return parse(Int, first_line_splitted[7])
 end
-function _parse_stages(last_line)
+
+function _parse_stages(last_line::AbstractString)
     last_line_splitted = split(last_line, ',')
     return parse(Int, last_line_splitted[1])
 end
-function _parse_scenarios(last_line)
+
+function _parse_scenarios(last_line::AbstractString)
     last_line_splitted = split(last_line, ',')
     return parse(Int, last_line_splitted[2])
 end
-function _parse_blocks(last_line, stages::Int, is_hourly::Bool, stage_type::PSRI.StageType, initial_stage::Int)
+
+function _parse_blocks(
+    last_line::AbstractString,
+    stages::Integer,
+    is_hourly::Bool,
+    stage_type::PSRI.StageType,
+    initial_stage::Integer
+)
     if is_hourly
         if stage_type == PSRI.STAGE_MONTH
             blocks = 0
@@ -65,7 +77,8 @@ function _parse_blocks(last_line, stages::Int, is_hourly::Bool, stage_type::PSRI
     last_line_splitted = split(last_line, ',')
     return parse(Int, last_line_splitted[3])
 end
-function _read_last_line(file)
+
+function _read_last_line(file::AbstractString)
     open(file) do io
         seekend(io)
         seek(io, position(io) - 2)
@@ -79,9 +92,9 @@ end
 
 function PSRI.open(
     ::Type{Reader},
-    path::String;
+    path::AbstractString;
     is_hourly::Bool = false,
-    header::Vector{String} = String[],
+    header::AbstractVector{<:AbstractString} = String[],
     use_header::Bool = false, # default to true
     allow_empty::Bool = false,
     first_stage::Dates.Date = Dates.Date(1900, 1, 1),
@@ -91,6 +104,7 @@ function PSRI.open(
     if verbose_header || !isempty(header) || use_header || allow_empty
         error("verbose_header, header, use_header and allow_empty arguments not supported by GrafCSV")
     end
+
     if first_stage != Dates.Date(1900, 1, 1)
         error("first_stage not supported by GrafCSV")
     end
@@ -99,6 +113,7 @@ function PSRI.open(
     if !endswith(path, ".csv")
         PATH_CSV *= ".csv"
     end
+
     if !isfile(PATH_CSV)
         error("file not found: $PATH_CSV")
     end
@@ -155,13 +170,16 @@ function PSRI.next_registry(ocr::Reader)
     if next === nothing
         return nothing
     end
+
     ocr.current_row, ocr.current_row_state = next
     for i in 1:ocr.num_agents
         ocr.data[i] = parse(Float64, ocr.current_row[i+3])
     end
+
     ocr.current_stage = parse(Int64, ocr.current_row[1])
     ocr.current_scenario = parse(Int64, ocr.current_row[2])
     ocr.current_block = parse(Int64, ocr.current_row[3])
+
     return nothing
 end
 
