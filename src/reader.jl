@@ -1,7 +1,7 @@
 mutable struct Reader <: PSRI.AbstractReader
     rows_iterator::CSV.Rows
     current_row::CSV.Row2
-    current_row_state
+    current_row_state::Tuple{<:Integer, <:Integer, <:Integer}
 
     stages::Int
     scenarios::Int
@@ -22,22 +22,22 @@ mutable struct Reader <: PSRI.AbstractReader
     is_hourly::Bool
 end
 
-function _parse_unit(header::AbstractString)
+function _parse_unit(header::AbstractVector{<:AbstractString})
     first_line_splitted = split(header[1], ',')
     return first_line_splitted[4]
 end
 
-function _parse_stage_type(header::AbstractString)
+function _parse_stage_type(header::AbstractVector{<:AbstractString})
     first_line_splitted = split(header[1], ',')
     return PSRI.StageType(parse(Int, first_line_splitted[5]))
 end
 
-function _parse_initial_stage(header::AbstractString)
+function _parse_initial_stage(header::AbstractVector{<:AbstractString})
     first_line_splitted = split(header[1], ',')
     return parse(Int, first_line_splitted[6])
 end
 
-function _parse_initial_year(header::AbstractString)
+function _parse_initial_year(header::AbstractVector{<:AbstractString})
     first_line_splitted = split(header[1], ',')
     return parse(Int, first_line_splitted[7])
 end
@@ -52,17 +52,11 @@ function _parse_scenarios(last_line::AbstractString)
     return parse(Int, last_line_splitted[2])
 end
 
-function _parse_blocks(
-    last_line::AbstractString,
-    stages::Integer,
-    is_hourly::Bool,
-    stage_type::PSRI.StageType,
-    initial_stage::Integer
-)
+function _parse_blocks(last_line::AbstractString, stages::Integer, is_hourly::Bool, stage_type::PSRI.StageType, initial_stage::Integer)
     if is_hourly
         if stage_type == PSRI.STAGE_MONTH
             blocks = 0
-            for t in initial_stage:initial_stage + stages
+            for t in initial_stage:initial_stage+stages
                 blocks_month = PSRI.DAYS_IN_MONTH[mod1(t - 1 + initial_stage, 12)] * 24
                 if blocks_month > blocks
                     blocks = blocks_month
@@ -74,6 +68,7 @@ function _parse_blocks(
             # error("Unknown stage_type = $(io.stage_type)")
         end
     end
+
     last_line_splitted = split(last_line, ',')
     return parse(Int, last_line_splitted[3])
 end
@@ -86,7 +81,7 @@ function _read_last_line(file::AbstractString)
             seek(io, position(io) - 1)
         end
         Base.read(io, Char)
-        Base.read(io, String)
+        return Base.read(io, String)
     end
 end
 
@@ -155,7 +150,7 @@ function PSRI.open(
         num_agents,
         data,
         stage_type,
-        is_hourly
+        is_hourly,
     )
 
     return io
@@ -170,16 +165,13 @@ function PSRI.next_registry(ocr::Reader)
     if next === nothing
         return nothing
     end
-
     ocr.current_row, ocr.current_row_state = next
     for i in 1:ocr.num_agents
         ocr.data[i] = parse(Float64, ocr.current_row[i+3])
     end
-
     ocr.current_stage = parse(Int64, ocr.current_row[1])
     ocr.current_scenario = parse(Int64, ocr.current_row[2])
     ocr.current_block = parse(Int64, ocr.current_row[3])
-
     return nothing
 end
 

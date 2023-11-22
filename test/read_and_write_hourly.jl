@@ -20,22 +20,22 @@ function read_write_csv_hourly()
         # optional:
         stage_type = STAGE_TYPE,
         initial_stage = INITIAL_STAGE,
-        initial_year = INITIAL_YEAR
+        initial_year = INITIAL_YEAR,
     )
 
     # Loop de gravacao
-    for stage = 1:STAGES
-        for scenario = 1:SCENARIOS
+    for stage in 1:STAGES
+        for scenario in 1:SCENARIOS
             for block in 1:PSRI.blocks_in_stage(gerter, stage)
-                X = 10_000. * stage + 1000. * scenario + block
-                Y = block + 0.
-                Z = 10. * stage + scenario
+                X = 10_000.0 * stage + 1000.0 * scenario + block
+                Y = block + 0.0
+                Z = 10.0 * stage + scenario
                 PSRI.write_registry(
                     gerter,
                     [X, Y, Z],
                     stage,
                     scenario,
-                    block
+                    block,
                 )
             end
         end
@@ -47,7 +47,7 @@ function read_write_csv_hourly()
     ior = PSRI.open(
         GrafCSV.Reader,
         FILE_GERTER,
-        is_hourly = true
+        is_hourly = true,
     )
 
     @test PSRI.max_stages(ior) == STAGES
@@ -59,16 +59,16 @@ function read_write_csv_hourly()
     @test PSRI.data_unit(ior) == UNIT
     @test PSRI.agent_names(ior) == ["X", "Y", "Z"]
 
-    for stage = 1:STAGES
-        for scenario = 1:SCENARIOS
-            for block = 1:PSRI.blocks_in_stage(ior, stage)
+    for stage in 1:STAGES
+        for scenario in 1:SCENARIOS
+            for block in 1:PSRI.blocks_in_stage(ior, stage)
                 @test PSRI.current_stage(ior) == stage
                 @test PSRI.current_scenario(ior) == scenario
                 @test PSRI.current_block(ior) == block
 
-                X = 10_000. * stage + 1000. * scenario + block
-                Y = block + 0.
-                Z = 10. * stage + scenario
+                X = 10_000.0 * stage + 1000.0 * scenario + block
+                Y = block + 0.0
+                Z = 10.0 * stage + scenario
                 ref = [X, Y, Z]
 
                 for agent in 1:3
@@ -82,7 +82,8 @@ function read_write_csv_hourly()
 
     PSRI.close(ior)
     ior = nothing
-    GC.gc();GC.gc()
+    GC.gc()
+    GC.gc()
 
     try
         rm(FILE_GERTER * ".csv")

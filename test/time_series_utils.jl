@@ -1,6 +1,7 @@
 function rm_bin_hdr(file::String)
     rm(file * ".bin")
     rm(file * ".hdr")
+    return nothing
 end
 
 function test_non_unique_agents()
@@ -22,7 +23,6 @@ end
 test_non_unique_agents()
 
 function test_convert_twice()
-
     BLOCKS = 3
     SCENARIOS = 10
     STAGES = 12
@@ -41,16 +41,16 @@ function test_convert_twice()
         initial_year = 2006,
     )
 
-    for estagio = 1:STAGES, serie = 1:SCENARIOS, bloco = 1:BLOCKS
-        X = estagio + serie + 0.
-        Y = serie - estagio + 0.
-        Z = estagio + serie + bloco * 100.
+    for estagio in 1:STAGES, serie in 1:SCENARIOS, bloco in 1:BLOCKS
+        X = estagio + serie + 0.0
+        Y = serie - estagio + 0.0
+        Z = estagio + serie + bloco * 100.0
         PSRI.write_registry(
             iow,
             [X, Y, Z],
             estagio,
             serie,
-            bloco
+            bloco,
         )
     end
 
@@ -66,7 +66,7 @@ function test_convert_twice()
     ior = PSRI.open(
         GrafCSV.Reader,
         FILE_PATH,
-        use_header = false
+        use_header = false,
     )
 
     @test PSRI.max_stages(ior) == STAGES
@@ -80,18 +80,18 @@ function test_convert_twice()
     # obtem número de colunas
     @test PSRI.agent_names(ior) == ["X", "Y", "Z"]
 
-    for estagio = 1:STAGES
-        for serie = 1:SCENARIOS
-            for bloco = 1:BLOCKS
+    for estagio in 1:STAGES
+        for serie in 1:SCENARIOS
+            for bloco in 1:BLOCKS
                 @test PSRI.current_stage(ior) == estagio
                 @test PSRI.current_scenario(ior) == serie
                 @test PSRI.current_block(ior) == bloco
-                
+
                 X = estagio + serie
                 Y = serie - estagio
                 Z = estagio + serie + bloco * 100
                 ref = [X, Y, Z]
-                
+
                 for agent in 1:3
                     @test ior[agent] == ref[agent]
                 end
@@ -115,7 +115,7 @@ function test_convert_twice()
     ior = PSRI.open(
         PSRI.OpenBinary.Reader,
         FILE_PATH_2,
-        use_header = false
+        use_header = false,
     )
 
     @test PSRI.max_stages(ior) == STAGES
@@ -129,9 +129,9 @@ function test_convert_twice()
     # obtem número de colunas
     @test PSRI.agent_names(ior) == ["X", "Y", "Z"]
 
-    for estagio = 1:STAGES
-        for serie = 1:SCENARIOS
-            for bloco = 1:BLOCKS
+    for estagio in 1:STAGES
+        for serie in 1:SCENARIOS
+            for bloco in 1:BLOCKS
                 @test PSRI.current_stage(ior) == estagio
                 @test PSRI.current_scenario(ior) == serie
                 @test PSRI.current_block(ior) == bloco
@@ -163,7 +163,6 @@ end
 test_convert_twice()
 
 function test_file_to_array()
-
     BLOCKS = 3
     SCENARIOS = 10
     STAGES = 12
@@ -182,16 +181,16 @@ function test_file_to_array()
         initial_year = 2006,
     )
 
-    for estagio = 1:STAGES, serie = 1:SCENARIOS, bloco = 1:BLOCKS
-        X = estagio + serie + 0.
-        Y = serie - estagio + 0.
-        Z = estagio + serie + bloco * 100.
+    for estagio in 1:STAGES, serie in 1:SCENARIOS, bloco in 1:BLOCKS
+        X = estagio + serie + 0.0
+        Y = serie - estagio + 0.0
+        Z = estagio + serie + bloco * 100.0
         PSRI.write_registry(
             iow,
             [X, Y, Z],
             estagio,
             serie,
-            bloco
+            bloco,
         )
     end
 
@@ -200,27 +199,27 @@ function test_file_to_array()
     data, header = PSRI.file_to_array_and_header(
         PSRI.OpenBinary.Reader,
         FILE_PATH;
-        use_header=false
+        use_header = false,
     )
 
     data_order, header_order = PSRI.file_to_array_and_header(
         PSRI.OpenBinary.Reader,
         FILE_PATH;
-        use_header=true,
-        header=["Y", "Z", "X"]
+        use_header = true,
+        header = ["Y", "Z", "X"],
     )
 
     @test data == PSRI.file_to_array(
         PSRI.OpenBinary.Reader,
         FILE_PATH;
-        use_header=false
+        use_header = false,
     )
 
     @test data_order == PSRI.file_to_array(
         PSRI.OpenBinary.Reader,
         FILE_PATH;
-        use_header=true,
-        header=["Y", "Z", "X"]
+        use_header = true,
+        header = ["Y", "Z", "X"],
     )
 
     @test data_order[1] == data[2] # "Y"
@@ -239,7 +238,7 @@ function test_file_to_array()
     ior = PSRI.open(
         GrafCSV.Reader,
         FILE_PATH,
-        use_header = false
+        use_header = false,
     )
 
     @test PSRI.max_stages(ior) == STAGES
@@ -253,18 +252,18 @@ function test_file_to_array()
     # obtem número de colunas
     @test PSRI.agent_names(ior) == ["X", "Y", "Z"]
 
-    for estagio = 1:STAGES
-        for serie = 1:SCENARIOS
-            for bloco = 1:BLOCKS
+    for estagio in 1:STAGES
+        for serie in 1:SCENARIOS
+            for bloco in 1:BLOCKS
                 @test PSRI.current_stage(ior) == estagio
                 @test PSRI.current_scenario(ior) == serie
                 @test PSRI.current_block(ior) == bloco
-                
+
                 X = estagio + serie
                 Y = serie - estagio
                 Z = estagio + serie + bloco * 100
                 ref = [X, Y, Z]
-                
+
                 for agent in 1:3
                     @test ior[agent] == ref[agent]
                 end
