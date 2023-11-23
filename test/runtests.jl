@@ -3,6 +3,7 @@ using Test
 
 const PSRI = GrafCSV.PSRClassesInterface
 
+include("utils.jl")
 include("read_and_write_monthly.jl")
 include("read_and_write_hourly.jl")
 include("time_series_utils.jl")

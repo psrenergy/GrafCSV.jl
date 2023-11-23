@@ -1,31 +1,30 @@
 function test_read_and_write_hourly()
-    FILE_GERTER = joinpath(".", "data", "gerter")
+    path = joinpath(".", "data", "hourly")
 
-    STAGES = 3
-    SCENARIOS = 2
-    AGENTS = ["X", "Y", "Z"]
-    UNIT = "MW"
-    STAGE_TYPE = PSRI.STAGE_MONTH
-    INITIAL_STAGE = 2
-    INITIAL_YEAR = 2006
+    stages = 3
+    scenarios = 2
+    agents = ["X", "Y", "Z"]
+    unit = "MW"
+    stage_type = PSRI.STAGE_MONTH
+    initial_stage = 2
+    initial_year = 2006
 
     gerter = PSRI.open(
         GrafCSV.Writer,
-        FILE_GERTER,
+        path,
         is_hourly = true,
-        scenarios = SCENARIOS,
-        stages = STAGES,
-        agents = AGENTS,
-        unit = UNIT,
+        scenarios = scenarios,
+        stages = stages,
+        agents = agents,
+        unit = unit,
         # optional:
-        stage_type = STAGE_TYPE,
-        initial_stage = INITIAL_STAGE,
-        initial_year = INITIAL_YEAR,
+        stage_type = stage_type,
+        initial_stage = initial_stage,
+        initial_year = initial_year,
     )
 
-    # Loop de gravacao
-    for stage in 1:STAGES
-        for scenario in 1:SCENARIOS
+    for stage in 1:stages
+        for scenario in 1:scenarios
             for block in 1:PSRI.blocks_in_stage(gerter, stage)
                 X = 10_000.0 * stage + 1000.0 * scenario + block
                 Y = block + 0.0
@@ -41,26 +40,25 @@ function test_read_and_write_hourly()
         end
     end
 
-    # Finaliza gravacao
     PSRI.close(gerter)
 
     ior = PSRI.open(
         GrafCSV.Reader,
-        FILE_GERTER,
+        path,
         is_hourly = true,
     )
 
-    @test PSRI.max_stages(ior) == STAGES
-    @test PSRI.max_scenarios(ior) == SCENARIOS
+    @test PSRI.max_stages(ior) == stages
+    @test PSRI.max_scenarios(ior) == scenarios
     @test PSRI.max_blocks(ior) == 744
-    @test PSRI.stage_type(ior) == STAGE_TYPE
-    @test PSRI.initial_stage(ior) == INITIAL_STAGE
-    @test PSRI.initial_year(ior) == INITIAL_YEAR
-    @test PSRI.data_unit(ior) == UNIT
-    @test PSRI.agent_names(ior) == ["X", "Y", "Z"]
+    @test PSRI.stage_type(ior) == stage_type
+    @test PSRI.initial_stage(ior) == initial_stage
+    @test PSRI.initial_year(ior) == initial_year
+    @test PSRI.data_unit(ior) == unit
+    @test PSRI.agent_names(ior) == agents
 
-    for stage in 1:STAGES
-        for scenario in 1:SCENARIOS
+    for stage in 1:stages
+        for scenario in 1:scenarios
             for block in 1:PSRI.blocks_in_stage(ior, stage)
                 @test PSRI.current_stage(ior) == stage
                 @test PSRI.current_scenario(ior) == scenario
@@ -85,10 +83,7 @@ function test_read_and_write_hourly()
     GC.gc()
     GC.gc()
 
-    try
-        rm(FILE_GERTER * ".csv")
-    catch
-    end
+    safe_remove(path * ".csv")
 
     return nothing
 end
