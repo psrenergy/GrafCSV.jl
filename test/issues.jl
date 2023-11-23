@@ -12,9 +12,9 @@ function issue13()
     @test PSRI.initial_year(reader) == 2003
 
     @test PSRI.max_agents(reader) == 3
-    @test length(PSRI.agent_names(reader)[1]) == 7
-    @test length(PSRI.agent_names(reader)[2]) == 7
-    @test length(PSRI.agent_names(reader)[3]) == 7
+    @test PSRI.agent_names(reader)[1] == "Barra 1"
+    @test PSRI.agent_names(reader)[2] == "Barra 2"
+    @test PSRI.agent_names(reader)[3] == "Barra 3"
 end
 
 function test_issues()
