@@ -3,7 +3,7 @@ function test_read_and_write_hourly()
 
     stages = 3
     scenarios = 2
-    AGENTS = ["X", "Y", "Z"]
+    agents = ["X", "Y", "Z"]
     unit = "MW"
     stage_type = PSRI.STAGE_MONTH
     initial_stage = 2
@@ -15,7 +15,7 @@ function test_read_and_write_hourly()
         is_hourly = true,
         scenarios = scenarios,
         stages = stages,
-        agents = AGENTS,
+        agents = agents,
         unit = unit,
         # optional:
         stage_type = stage_type,
@@ -55,7 +55,7 @@ function test_read_and_write_hourly()
     @test PSRI.initial_stage(ior) == initial_stage
     @test PSRI.initial_year(ior) == initial_year
     @test PSRI.data_unit(ior) == unit
-    @test PSRI.agent_names(ior) == ["X", "Y", "Z"]
+    @test PSRI.agent_names(ior) == agents
 
     for stage in 1:stages
         for scenario in 1:scenarios

@@ -4,6 +4,7 @@ function test_read_and_write_monthly()
     stages = 12
     blocks = 3
     scenarios = 4
+    agents = ["X", "Y", "Z"]
     stage_type = PSRI.STAGE_MONTH
     initial_stage = 1
     initial_year = 2006
@@ -15,7 +16,7 @@ function test_read_and_write_monthly()
         blocks = blocks,
         scenarios = scenarios,
         stages = stages,
-        agents = ["X", "Y", "Z"],
+        agents = agents,
         unit = unit,
         # optional:
         stage_type = stage_type,
@@ -50,8 +51,7 @@ function test_read_and_write_monthly()
     @test PSRI.initial_stage(ior) == initial_stage
     @test PSRI.initial_year(ior) == initial_year
     @test PSRI.data_unit(ior) == unit
-
-    @test PSRI.agent_names(ior) == ["X", "Y", "Z"]
+    @test PSRI.agent_names(ior) == agents
 
     for stage in 1:stages
         for scenario in 1:scenarios
