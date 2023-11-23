@@ -22,9 +22,13 @@ mutable struct Reader <: PSRI.AbstractReader
     is_hourly::Bool
 end
 
+function _parse_agents(row::AbstractVector{Symbol})
+    return strip.(string.(row)[4:end])
+end
+
 function _parse_unit(header::AbstractVector{<:AbstractString})
     first_line_splitted = split(header[1], ',')
-    return first_line_splitted[4]
+    return strip(first_line_splitted[4])
 end
 
 function _parse_stage_type(header::AbstractVector{<:AbstractString})
@@ -114,7 +118,7 @@ function PSRI.open(
     end
 
     rows_iterator = CSV.Rows(PATH_CSV; header = 4)
-    agent_names = string.(rows_iterator.names)[4:end]
+    agent_names = _parse_agents(rows_iterator.names)
     num_agents = length(agent_names)
     current_row, current_row_state = iterate(rows_iterator)
 
