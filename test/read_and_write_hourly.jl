@@ -1,5 +1,5 @@
-function read_write_csv_hourly()
-    FILE_GERTER = joinpath(".", "gerter")
+function test_read_and_write_hourly()
+    FILE_GERTER = joinpath(".", "data", "gerter")
 
     STAGES = 3
     SCENARIOS = 2
@@ -89,6 +89,6 @@ function read_write_csv_hourly()
         rm(FILE_GERTER * ".csv")
     catch
     end
-end
 
-read_write_csv_hourly()
+    return nothing
+end
