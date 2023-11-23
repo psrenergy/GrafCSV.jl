@@ -1,34 +1,29 @@
 function test_read_and_write_monthly()
-    FILE_PATH = joinpath(".", "data", "example_2")
+    path = joinpath(".", "data", "monthly")
 
-    STAGES = 12
-    BLOCKS = 3
-    SCENARIOS = 4
-    STAGE_TYPE = PSRI.STAGE_MONTH
-    INITIAL_STAGE = 1
-    INITIAL_YEAR = 2006
-    UNIT = "MW"
+    stages = 12
+    blocks = 3
+    scenarios = 4
+    stage_type = PSRI.STAGE_MONTH
+    initial_stage = 1
+    initial_year = 2006
+    unit = "MW"
 
     iow = PSRI.open(
         GrafCSV.Writer,
-        FILE_PATH,
-        blocks = BLOCKS,
-        scenarios = SCENARIOS,
-        stages = STAGES,
+        path,
+        blocks = blocks,
+        scenarios = scenarios,
+        stages = stages,
         agents = ["X", "Y", "Z"],
-        unit = UNIT,
+        unit = unit,
         # optional:
-        stage_type = STAGE_TYPE,
-        initial_stage = INITIAL_STAGE,
-        initial_year = INITIAL_YEAR,
+        stage_type = stage_type,
+        initial_stage = initial_stage,
+        initial_year = initial_year,
     )
 
-    # ---------------------------------------------
-    # Parte 3 - Gravacao dos registros do resultado
-    # ---------------------------------------------
-
-    # Loop de gravacao
-    for stage in 1:STAGES, scenario in 1:SCENARIOS, block in 1:BLOCKS
+    for stage in 1:stages, scenario in 1:scenarios, block in 1:blocks
         X = stage + scenario + 0.0
         Y = scenario - stage + 0.0
         Z = stage + scenario + block * 100.0
@@ -41,28 +36,26 @@ function test_read_and_write_monthly()
         )
     end
 
-    # Finaliza gravacao
     PSRI.close(iow)
 
     ior = PSRI.open(
         GrafCSV.Reader,
-        FILE_PATH,
+        path,
     )
 
-    @test PSRI.max_stages(ior) == STAGES
-    @test PSRI.max_scenarios(ior) == SCENARIOS
-    @test PSRI.max_blocks(ior) == BLOCKS
-    @test PSRI.stage_type(ior) == STAGE_TYPE
-    @test PSRI.initial_stage(ior) == INITIAL_STAGE
-    @test PSRI.initial_year(ior) == INITIAL_YEAR
-    @test PSRI.data_unit(ior) == UNIT
+    @test PSRI.max_stages(ior) == stages
+    @test PSRI.max_scenarios(ior) == scenarios
+    @test PSRI.max_blocks(ior) == blocks
+    @test PSRI.stage_type(ior) == stage_type
+    @test PSRI.initial_stage(ior) == initial_stage
+    @test PSRI.initial_year(ior) == initial_year
+    @test PSRI.data_unit(ior) == unit
 
-    # obtem número de colunas
     @test PSRI.agent_names(ior) == ["X", "Y", "Z"]
 
-    for stage in 1:STAGES
-        for scenario in 1:SCENARIOS
-            for block in 1:BLOCKS
+    for stage in 1:stages
+        for scenario in 1:scenarios
+            for block in 1:blocks
                 @test PSRI.current_stage(ior) == stage
                 @test PSRI.current_scenario(ior) == scenario
                 @test PSRI.current_block(ior) == block
@@ -85,16 +78,12 @@ function test_read_and_write_monthly()
     @test_throws ErrorException PSRI.convert_file(
         GrafCSV.Reader,
         GrafCSV.Writer,
-        FILE_PATH,
+        path,
     )
 
     ior = nothing
 
-    try
-        rm(FILE_PATH * ".csv")
-    catch
-        println("Failed to delete: $FILE_PATH")
-    end
+    safe_remove(path * ".csv")
 
     return nothing
 end
