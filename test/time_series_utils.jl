@@ -5,7 +5,7 @@ function rm_bin_hdr(file::String)
 end
 
 function test_non_unique_agents()
-    FILE_PATH = joinpath(".", "example_non_unique_agents")
+    FILE_PATH = joinpath(".", "data", "example_non_unique_agents")
     @test_throws ErrorException iow = PSRI.open(
         GrafCSV.Writer,
         FILE_PATH,
@@ -20,14 +20,12 @@ function test_non_unique_agents()
     )
 end
 
-test_non_unique_agents()
-
 function test_convert_twice()
     BLOCKS = 3
     SCENARIOS = 10
     STAGES = 12
 
-    FILE_PATH = joinpath(".", "example_convert_1")
+    FILE_PATH = joinpath(".", "data", "example_convert_1")
     iow = PSRI.open(
         PSRI.OpenBinary.Writer,
         FILE_PATH,
@@ -103,7 +101,7 @@ function test_convert_twice()
     PSRI.close(ior)
     ior = nothing
 
-    FILE_PATH_2 = joinpath(".", "example_convert_2")
+    FILE_PATH_2 = joinpath(".", "data", "example_convert_2")
 
     PSRI.convert_file(
         GrafCSV.Reader,
@@ -157,17 +155,15 @@ function test_convert_twice()
         println("Failed to remove $(FILE_PATH).csv")
     end
 
-    return
+    return nothing
 end
-
-test_convert_twice()
 
 function test_file_to_array()
     BLOCKS = 3
     SCENARIOS = 10
     STAGES = 12
 
-    FILE_PATH = joinpath(".", "example_array_1")
+    FILE_PATH = joinpath(".", "data", "example_array_1")
     iow = PSRI.open(
         PSRI.OpenBinary.Writer,
         FILE_PATH,
@@ -282,7 +278,12 @@ function test_file_to_array()
         println("Failed to remove $(FILE_PATH).csv")
     end
 
-    return
+    return nothing
 end
 
-test_file_to_array()
+function test_time_series_utils()
+    test_non_unique_agents()
+    test_convert_twice()
+    test_file_to_array()
+    return nothing
+end

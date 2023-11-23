@@ -1,5 +1,5 @@
-function read_write_csv_test()
-    FILE_PATH = joinpath(".", "example_2")
+function test_read_and_write_monthly()
+    FILE_PATH = joinpath(".", "data", "example_2")
 
     STAGES = 12
     BLOCKS = 3
@@ -95,5 +95,6 @@ function read_write_csv_test()
     catch
         println("Failed to delete: $FILE_PATH")
     end
+
+    return nothing
 end
-read_write_csv_test()
