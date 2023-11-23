@@ -1,7 +1,8 @@
 module GrafCSV
 
 import PSRClassesInterface
-# Load packages defined in the upper module PSRClassesInterface
+
+# load packages defined in the upper module PSRClassesInterface
 import Dates
 import CSV
 
@@ -17,6 +18,7 @@ function PSRI.convert_file(
     path_to::String = "",
 )
     error("Conversion with GrafCSV.Reader and GrafCSV.Writer is a no op.")
+    return nothing
 end
 
 end

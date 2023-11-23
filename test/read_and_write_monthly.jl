@@ -20,7 +20,7 @@ function read_write_csv_test()
         # optional:
         stage_type = STAGE_TYPE,
         initial_stage = INITIAL_STAGE,
-        initial_year = INITIAL_YEAR
+        initial_year = INITIAL_YEAR,
     )
 
     # ---------------------------------------------
@@ -28,16 +28,16 @@ function read_write_csv_test()
     # ---------------------------------------------
 
     # Loop de gravacao
-    for stage = 1:STAGES, scenario = 1:SCENARIOS, block = 1:BLOCKS
-        X = stage + scenario + 0.
-        Y = scenario - stage + 0.
-        Z = stage + scenario + block * 100.
+    for stage in 1:STAGES, scenario in 1:SCENARIOS, block in 1:BLOCKS
+        X = stage + scenario + 0.0
+        Y = scenario - stage + 0.0
+        Z = stage + scenario + block * 100.0
         PSRI.write_registry(
             iow,
             [X, Y, Z],
             stage,
             scenario,
-            block
+            block,
         )
     end
 
@@ -46,7 +46,7 @@ function read_write_csv_test()
 
     ior = PSRI.open(
         GrafCSV.Reader,
-        FILE_PATH
+        FILE_PATH,
     )
 
     @test PSRI.max_stages(ior) == STAGES
@@ -60,18 +60,18 @@ function read_write_csv_test()
     # obtem número de colunas
     @test PSRI.agent_names(ior) == ["X", "Y", "Z"]
 
-    for stage = 1:STAGES
-        for scenario = 1:SCENARIOS
-            for block = 1:BLOCKS
+    for stage in 1:STAGES
+        for scenario in 1:SCENARIOS
+            for block in 1:BLOCKS
                 @test PSRI.current_stage(ior) == stage
                 @test PSRI.current_scenario(ior) == scenario
                 @test PSRI.current_block(ior) == block
-                
+
                 X = stage + scenario
                 Y = scenario - stage
                 Z = stage + scenario + block * 100
                 ref = [X, Y, Z]
-                
+
                 for agent in 1:3
                     @test ior[agent] == ref[agent]
                 end
@@ -95,6 +95,5 @@ function read_write_csv_test()
     catch
         println("Failed to delete: $FILE_PATH")
     end
-
 end
 read_write_csv_test()
